@@ -750,13 +750,18 @@ const RelationModalWithContext = ({
 
   const options = data?.results ?? [];
 
-  React.useLayoutEffect(() => {
-    setTextValue('');
-  }, [fieldValue]);
-
   const handleSearch = async (search: string) => {
     setSearchParams((s) => ({ ...s, _q: search, page: 1 }));
   };
+
+  // After a selection (or any change to the connected relations) the typed search text is
+  // cleared in the input, so the server query must be cleared too — otherwise the next
+  // options list is still filtered by the previous search and shows nothing.
+  React.useLayoutEffect(() => {
+    setTextValue('');
+    handleSearch('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldValue]);
   return (
     <RelationModalRenderer>
       {({ dispatch }) => (
